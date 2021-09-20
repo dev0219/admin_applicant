@@ -113,7 +113,7 @@
                     Roof Type : {{applicationinfo.roof_type}}<br><br>
                   
                   </v-col>
-                  <v-col col="12" sm="6"> <h5 style="color: #000 !important">Applicant(s)</h5><br><br>
+                  <v-col col="12" sm="6"> <h5 style="color: #000 !important">Applicant(s)</h5><br>
                      Address : {{applicationinfo.address}}<br>
                     Email : {{applicationinfo.email}}<br>
                     Phone : {{applicationinfo.phone}}<br>
@@ -121,6 +121,9 @@
 
                     Current carrier : {{applicationinfo.carrierType}}<br>
                     Current auto premium : {{applicationinfo.current_auto_premiun}}<br><br>
+                    <h5 style="color: #000 !important">Custom Questions</h5>
+                      {{applicationinfo.question5}} : {{applicationinfo.answer5}} <br>
+                      {{applicationinfo.question6}} : {{applicationinfo.answer6}}
                    </v-col>
                   </v-row>
                
@@ -257,7 +260,9 @@ export default {
       options: {
         page: 1,
         itemsPerPage: 10,
-        sortBy:[],
+        sortBy:['register_date'],
+        sortDesc: ['false'],
+         
       },
       statusColor,
       // icons
@@ -265,7 +270,11 @@ export default {
         mdiSquareEditOutline,
         mdiDotsVertical,
       },
-      current_page_status:{}
+      current_page_status:{
+          itemsPerPage: 10,
+          page:1,
+          sortBy:['register_date'],
+          sortDesc: ['false'],}
     }
   },
   created() {
@@ -279,6 +288,7 @@ export default {
           itemsPerPage: val.itemsPerPage,
           page:val.page,
           sortBy:val.sortBy,
+          sortDesc: val.sortDesc
         };
     },
    handleScroll: function(evt, el) {
@@ -295,6 +305,7 @@ export default {
           _that.options.itemsPerPage = _that.current_page_status.itemsPerPage,
           _that.options.page = _that.current_page_status.page,
          _that.options.sortBy = _that.current_page_status.sortBy,
+         _that.options.sortDesc =  _that.current_page_status.sortDesc,
           _that.search = _that.search
          }, 6000);
     },
@@ -306,6 +317,10 @@ export default {
        
        this.applink = val.link;
        this.applicationinfo.name = val.name;
+       this.applicationinfo.question5 = val.question5?val.question5:'';
+       this.applicationinfo.question6 = val.question6?val.question6:'';
+       this.applicationinfo.answer5 = val.answer5?val.answer5:'';
+       this.applicationinfo.answer6 = val.answer6?val.answer6:'';
        this.applicationinfo.address = val.address 
        this.applicationinfo.email = val.email 
        this.applicationinfo.phone = val.phone

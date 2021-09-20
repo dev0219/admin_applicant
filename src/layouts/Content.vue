@@ -130,10 +130,13 @@
                 <v-col cols="12" md="6">
                   <label class="text-h6">Agent Image</label>
                   <div
-                    class="image-input"
-                    :style="{ 'background-image': `url(${imageDataAgent})` }"
+                    class="image-input agent-image"
+                    :style="{ 'background-image': `url('${imageDataAgent}')` }"
                     @click="chooseImageAgent"
                   >
+                   <v-icon class="custom-icon" size="30">
+                    {{mdiCloudUploadOutline}}
+                    </v-icon>
                     <span
                       v-if="!imageDataAgent"
                       class="placeholder"
@@ -151,10 +154,13 @@
                 <v-col cols="12" md="6">
                 <label  class="text-h6">Agency Image</label>
                   <div
-                    class="image-input"
-                    :style="{ 'background-image': `url(${imageDataAgency})` }"
+                    class="image-input agent-image"
+                    :style="{ 'background-image': `url('${imageDataAgency}')` }"
                     @click="chooseImageAgency"
                   >
+                  <v-icon class="custom-icon" size="30">
+                    {{mdiCloudUploadOutline}}
+                    </v-icon>
                     <span
                       v-if="!imageDataAgency"
                       class="placeholder"
@@ -194,7 +200,7 @@
 
 <script>
 import { ref } from '@vue/composition-api'
-import { mdiMagnify, mdiBellOutline, mdiGithub } from '@mdi/js'
+import { mdiMagnify, mdiBellOutline, mdiGithub,mdiCloudUploadOutline } from '@mdi/js'
 import VerticalNavMenu from './components/vertical-nav-menu/VerticalNavMenu.vue'
 
 import AppBarUserMenu from './components/AppBarUserMenu.vue'
@@ -219,6 +225,7 @@ export default {
       lastName:'',
       agencyname:"",
       email:'',
+      mdiCloudUploadOutline:mdiCloudUploadOutline,
       phone:'',
       emailtext:'Thank you for your application',
       createuser:false,
@@ -341,10 +348,26 @@ export default {
     }
   }
 }
+.agent-image{
+    text-align:center;
+}
+.agent-image:hover {
+    opacity: 0.3;
+    text-align:center;
+}
+.agent-image:hover .custom-icon {
+    opacity: 1;
+    color:black;
+}
+.custom-icon{
+  opacity:0;
+    top:40%;
+}
 .copylink{
   background: #ff0a83 !important;
   color:white !important;
 }
+
 .boxed-container {
   max-width: 1560px;
   margin-left: auto;

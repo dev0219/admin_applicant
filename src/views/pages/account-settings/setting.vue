@@ -90,15 +90,60 @@
                     ></v-text-field>
 
                 </v-col>
+                <v-col cols="12" md="6">
 
+                  <v-text-field
+                    v-model="question5"
+                    label="Question5"
+                    outlined
+                    dense
+                    placeholder="Question5"
+                    hide-details
+                    ></v-text-field>
+
+                </v-col>
+                
+                <v-col cols="12" md="6">
+
+                  <v-text-field
+                    v-model="question6"
+                    label="Question6"
+                    outlined
+                    dense
+                    placeholder="Question6"
+                    hide-details
+                    ></v-text-field>
+
+                </v-col>
+                <v-col cols="12" md="6">
+
+                  <v-radio-group v-model="answer_type5">
+                    <v-radio  :label="`Yes / No`" value="y/n"></v-radio>
+                    <v-radio  :label="`Input`" value="input"></v-radio>
+                  </v-radio-group>
+
+                </v-col>
+
+
+                <v-col cols="12" md="6">
+
+                  <v-radio-group v-model="answer_type6">
+                    <v-radio  :label="`Yes / No`" value="y/n"></v-radio>
+                    <v-radio  :label="`Input`" value="input"></v-radio>
+                  </v-radio-group>
+
+                </v-col>
               
                  <v-col cols="12" md="6">
                   <label class="text-h6">Agent Image</label>
                   <div
-                    class="image-input"
-                    :style="{ 'background-image': `url(${imageDataAgent})` }"
+                    class="image-input  agent-image"
+                    :style="{ 'background-image': `url('${imageDataAgent}')`}"
                     @click="chooseImageAgent"
                   >
+                  <v-icon class="custom-icon" size="30">
+                    {{mdiCloudUploadOutline}}
+                    </v-icon>
                     <span
                       v-if="!imageDataAgent"
                       class="placeholder"
@@ -117,10 +162,13 @@
                 <v-col cols="12" md="6">
                   <label  class="text-h6">Property Image</label>
                   <div
-                    class="image-input"
-                    :style="{ 'background-image': `url(${imageDataProperty})` }"
+                    class="image-input agent-image"
+                    :style="{ 'background-image': `url('${imageDataProperty}')` }"
                     @click="chooseImageProperty"
                   >
+                  <v-icon class="custom-icon" size="30">
+                    {{mdiCloudUploadOutline}}
+                    </v-icon>
                     <span
                       v-if="!imageDataProperty"
                       class="placeholder"
@@ -139,10 +187,13 @@
                 <v-col cols="12" md="6">
                   <label class="text-h6">Agency Image</label>
                   <div
-                    class="image-input"
-                    :style="{ 'background-image': `url(${imageDataAgency})` }"
+                    class="image-input agent-image"
+                    :style="{ 'background-image': `url('${imageDataAgency}')` }"
                     @click="chooseImageAgency"
                   >
+                  <v-icon class="custom-icon" size="30">
+                    {{mdiCloudUploadOutline}}
+                    </v-icon>
                     <span
                       v-if="!imageDataAgency"
                       class="placeholder"
@@ -160,10 +211,13 @@
                 <v-col cols="12" md="6">
                    <label  class="text-h6">Household Image</label>
                   <div
-                    class="image-input"
-                    :style="{ 'background-image': `url(${imageDataHousehold})` }"
+                    class="image-input agent-image"
+                    :style="{ 'background-image': `url('${imageDataHousehold}')` }"
                     @click="chooseImageHousehold"
                   >
+                  <v-icon class="custom-icon" size="30">
+                    {{mdiCloudUploadOutline}}
+                    </v-icon>
                     <span
                       v-if="!imageDataHousehold"
                       class="placeholder"
@@ -182,10 +236,13 @@
                 <v-col cols="12" md="6">
                   <label class="text-h6">Intro Image</label>
                   <div
-                    class="image-input"
-                    :style="{ 'background-image': `url(${imageDataIntro})` }"
+                    class="image-input agent-image"
+                    :style="{ 'background-image': `url('${imageDataIntro}'` }"
                     @click="chooseImageIntro"
                   >
+                  <v-icon class="custom-icon" size="30">
+                    {{mdiCloudUploadOutline}}
+                    </v-icon>
                     <span
                       v-if="!imageDataIntro"
                       class="placeholder"
@@ -242,6 +299,7 @@
 </template>
 <script>
 import axios from 'axios'
+import {mdiCloudUploadOutline } from '@mdi/js'
 const BaseUrl = 'https://apply.insure/'
 import qs from 'qs';
 export default{
@@ -260,8 +318,13 @@ export default{
             introimagename:'',
             firstName:'',
             link:'',
+            answer_type6:'y/n',
+            answer_type5:'input',
+            question5:'',
+            question6:'',
             lastName:'',
             emailtext:'',
+            mdiCloudUploadOutline:mdiCloudUploadOutline,
             phone:'',
             address:'',
             agencyname:"",
@@ -288,6 +351,12 @@ export default{
             this.lastName = this.useritem.lastname,
             this.link = this.useritem.link,
             this.agencyname=this.useritem.agencyname,
+
+            this.answer_type5 = this.useritem.answer_type5,
+            this.answer_type6 = this.useritem.answer_type6,
+            this.question5 = this.useritem.question5,
+            this.question6 =  this.useritem.question6,
+
             this.phone = this.useritem.phone,
             this.email = this.useritem.email,
             this.emailtext = this.useritem.emailtext == undefined || this.useritem.emailtext == ''?"":this.useritem.emailtext,
@@ -298,6 +367,7 @@ export default{
             this.imageDataAgency = this.useritem.agencyimage == undefined || this.useritem.agencyimage == ''?require('@/assets/images/avatars/default.png'):BaseUrl+this.useritem.agencyimage,
             this.imageDataHousehold = this.useritem.householdimage == undefined || this.useritem.householdimage == ''?require('@/assets/images/avatars/default.png'):BaseUrl+this.useritem.householdimage
             this.componentkey++;
+            console.log(this.answer_type5,this.answer_type6,this.question5,this.question6)
         },
          async Submit() {
             const data = {
@@ -308,6 +378,10 @@ export default{
                 link : this.link,
                 phone : this.phone,
                 agencyname : this.agencyname,
+                question5 : this.question5?this.question5:'',
+                question6 : this.question6?this.question6:'',
+                answer_type6 : this.answer_type6?this.answer_type6:'',
+                answer_type5 : this.answer_type5?this.answer_type5:'',
                 emailtext : this.emailtext,
                 agentimage : this.agentimagename == ''?this.useritem.agentimage:this.agentimagename,
                 introimage : this.introimagename == ''?this.useritem.introimage:this.introimagename,
@@ -457,6 +531,21 @@ export default{
   cursor: pointer;
   background-size: cover;
   background-position: center center;
+}
+.agent-image{
+    text-align:center;
+}
+.agent-image:hover {
+    opacity: 0.3;
+    text-align:center;
+}
+.agent-image:hover .custom-icon {
+    opacity: 1;
+    color:black;
+}
+.custom-icon{
+  opacity:0;
+    top:40%;
 }
 .placeholder {
   background: #F0F0F0;

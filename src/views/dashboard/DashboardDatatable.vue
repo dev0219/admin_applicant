@@ -47,6 +47,7 @@
         
       </template>   
     </v-data-table>
+   
     
     <v-dialog
       v-model="dialog"
@@ -178,10 +179,13 @@
                               <v-col cols="12" md="2">
                                 <label>Agent Image</label>
                                 <div
-                                  class="image-input"
-                                  :style="{ 'background-image': `url(${imageDataAgent})` }"
+                                  class="image-input agent-image"
+                                  :style="{ 'background-image': `url('${imageDataAgent}')` }"
                                   @click="chooseImageAgent"
                                 >
+                                <v-icon class="custom-icon" size="30">
+                                   {{mdiCloudUploadOutline}}
+                                </v-icon>
                                   <span
                                     v-if="!imageDataAgent"
                                     class="placeholder"
@@ -200,10 +204,13 @@
                               <v-col cols="12" md="2">
                                 <label>Property Image</label>
                                 <div
-                                  class="image-input"
-                                  :style="{ 'background-image': `url(${imageDataProperty})` }"
+                                  class="image-input agent-image"
+                                  :style="{ 'background-image': `url('${imageDataProperty}')` }"
                                   @click="chooseImageProperty"
                                 >
+                                <v-icon class="custom-icon" size="30">
+                                   {{mdiCloudUploadOutline}}
+                                </v-icon>
                                   <span
                                     v-if="!imageDataProperty"
                                     class="placeholder"
@@ -222,10 +229,13 @@
                               <v-col cols="12" md="2">
                                 <label>Agency Image</label>
                                 <div
-                                  class="image-input"
-                                  :style="{ 'background-image': `url(${imageDataAgency})` }"
+                                  class="image-input agent-image"
+                                  :style="{ 'background-image': `url('${imageDataAgency}')` }"
                                   @click="chooseImageAgency"
                                 >
+                                <v-icon class="custom-icon" size="30">
+                                   {{mdiCloudUploadOutline}}
+                                </v-icon>
                                   <span
                                     v-if="!imageDataAgency"
                                     class="placeholder"
@@ -243,10 +253,13 @@
                               <v-col cols="12" md="2">
                                 <label >Household Image</label>
                                 <div
-                                  class="image-input"
-                                  :style="{ 'background-image': `url(${imageDataHousehold})` }"
+                                  class="image-input agent-image"
+                                  :style="{ 'background-image': `url('${imageDataHousehold}')` }"
                                   @click="chooseImageHousehold"
                                 >
+                                <v-icon class="custom-icon" size="30">
+                                   {{mdiCloudUploadOutline}}
+                                </v-icon>
                                   <span
                                     v-if="!imageDataHousehold"
                                     class="placeholder"
@@ -265,10 +278,13 @@
                               <v-col cols="12" md="2">
                                 <label >Intro Image</label>
                                 <div
-                                  class="image-input"
-                                  :style="{ 'background-image': `url(${imageDataIntro})` }"
+                                  class="image-input agent-image"
+                                  :style="{ 'background-image': `url('${imageDataIntro}')` }"
                                   @click="chooseImageIntro"
                                 >
+                                <v-icon class="custom-icon" size="30">
+                                   {{mdiCloudUploadOutline}}
+                                </v-icon>
                                   <span
                                     v-if="!imageDataIntro"
                                     class="placeholder"
@@ -381,8 +397,10 @@ import {
   mdiEmailOpenOutline,
   mdiEmoticonHappyOutline,
   mdiFileMultipleOutline,
+  mdiUploadOutline,
+  mdiCloudUploadOutline,
   mdiFlaskEmptyOutline,
-   mdiPencilOutline,
+  mdiPencilOutline,
 } from '@mdi/js'
 
 export default {
@@ -432,6 +450,7 @@ export default {
       search: '',
       dialog:false,
       statusitem:'',
+      mdiCloudUploadOutline:mdiCloudUploadOutline,
       mdiDeleteOutline:mdiDeleteOutline,
       mdiPencilOutline:mdiPencilOutline,
       headers: [
@@ -439,7 +458,7 @@ export default {
         { text: 'LINK', value: 'link' ,width:"100px",}, 
         { text: 'EMAIL', value: 'email' ,width:"100px",},
         { text:'LAST APP',value:"lastdate",width:"150px",},
-        { text:'30 Day Total',value:"counter",width:"200px",sortable: false},
+        { text:'30 Day Total',value:"counter",width:"150px",sortable: true},
         { text:'USER CREATED',value:'created_at',width:"200px",},
 
       ],
@@ -464,32 +483,12 @@ export default {
     }
   },
   created() {   
-    // this.setInterval();
     this.getUsers();
   },
   methods:{  
     handleClick(val){
        this.getuser(val._id);
     },
-    setInterval() {
-      var _that = this
-      setInterval(function(){
-        var current_itemperpage = {};
-        current_itemperpage = {
-          itemsPerPage: _that.options.itemsPerPage,
-          page:_that.options.page,
-          sortBy:_that.options.sortBy,
-          search:_that.search
-        };
-      console.log("options", current_itemperpage)
-      //    _that.getUsers();
-      // _that.options.itemsPerPage = current_itemperpage.itemsPerPage;
-      // _that.options.page = current_itemperpage.page;
-      // _that.options.sortBy = current_itemperpage.sortBy;
-      // _that.search = current_itemperpage.search;
-      }, 6000);
-      // this.$refs['user_list'].refresh();
-    } , 
     changeRoute(a) {
       this.getUsers()
       },
@@ -543,6 +542,7 @@ export default {
             propertyimage : this.propertyimagename == ''?this.useritem.propertyimage:this.propertyimagename,
             householdimage : this.householdimagename ==''?this.useritem.householdimage:this.householdimagename,
             agencyimage : this.agencyimagename == ''?this.useritem.agencyimage:this.agencyimagename,
+            created_at:Date.now(),
             role : 0,
         }
         var url = BaseUrl + 'edit';
@@ -684,7 +684,7 @@ export default {
                  await axios.get(BaseUrl + `all`).then(response => (_that.usreList = response.data))
                  await axios.get(BaseUrl + `allapplicant`).then(response => (applicantLst = response.data))
                  for(var i=0;i<_that.usreList.length;i++) {
-                   var arrApp = applicantLst.filter(function(item){ return _that.usreList[i]['email'] == item.agentemail})
+                   var arrApp = applicantLst.filter(function(item){ return _that.usreList[i]['email'] == item.agentemail && _that.usreList[i]['link'] == item.link})
                     if(arrApp.length > 0){
                       _that.usreList[i]['counter'] = await this.Seldate(arrApp);
                               var date = new Date(Math.max(...arrApp.map(e => new Date(e.register_date))));
@@ -784,7 +784,22 @@ export default {
   background-size :cover;
   background-position: center center
 }
- 
+
+.agent-image{
+    text-align:center;
+}
+.agent-image:hover {
+    opacity: 0.3;
+    text-align:center;
+}
+.agent-image:hover .custom-icon {
+    opacity: 1;
+    color:black;
+}
+.custom-icon{
+  opacity:0;
+    top:40%;
+}
 
 .placeholder{
 background: #F0F0F0;

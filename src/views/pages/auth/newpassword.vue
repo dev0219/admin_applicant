@@ -93,6 +93,18 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog
+      v-model="sendpassword"
+      width="500"
+      content-class="vdialognewpassword"
+    >
+      <v-card>
+        
+        <v-card-text>
+          <h4>The new password sent successfully!</h4>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -132,6 +144,7 @@ export default {
     ]
 
     return {
+      sendpassword:false,
        loginstatus:false,
       isPasswordVisible,
       confirmpassword,
@@ -167,8 +180,11 @@ export default {
         newpassword: this.newpassword,
         id: this.userid
       }
+      this.sendpassword = true;
+      var _that = this;
+       setTimeout(() => {_that.sendpassword = false}, 3000);
       const result = null;
-     
+      
       try{
                  await axios.post(BaseUrl + 'resetpassword', data).then(response => this.response = response)
             
@@ -188,4 +204,9 @@ export default {
 
 <style lang="scss">
 @import '~@/plugins/vuetify/default-preset/preset/pages/auth.scss';
+</style>
+<style>
+.vdialognewpassword{
+  margin-top:-35%;
+}
 </style>
