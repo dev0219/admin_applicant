@@ -302,7 +302,10 @@ export default {
             catch(err){
                 console.log(err);
             }
-            this.agencyimagename = input.files[0].name
+             var newname = input.files[0].name
+            newname = newname.replace(/[&\/\\#,+()$~%'":*?<>{}]/g, '').toLowerCase()
+            newname = newname.replace(/\s+/g, '').toLowerCase()
+            this.agencyimagename = newname
         },
         async onSelectFileAgent () {
             const input = this.$refs.fileInputAgent
@@ -323,7 +326,10 @@ export default {
             catch(err){
                 console.log(err);
             }
-            this.agentimagename = input.files[0].name
+             var newname = input.files[0].name
+            newname = newname.replace(/[&\/\\#,+()$~%'":*?<>{}]/g, '').toLowerCase()
+            newname = newname.replace(/\s+/g, '').toLowerCase()
+            this.agentimagename = newname
             
         },
         chooseImageAgency () {

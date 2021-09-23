@@ -301,6 +301,28 @@
                               </v-col>
                             
                                <v-col cols="12" md="2">
+                               <label >Auto Image</label>
+                                <div
+                                  class="image-input agent-image"
+                                  :style="{ 'background-image': `url('${imageDataAuto}')` }"
+                                  @click="chooseImageAuto"
+                                >
+                                <v-icon class="custom-icon" size="30">
+                                   {{mdiCloudUploadOutline}}
+                                </v-icon>
+                                  <span
+                                    v-if="!imageDataAuto"
+                                    class="placeholder"
+                                  >
+                                  
+                                  </span>
+                                  <input
+                                    class="file-input"
+                                    ref="fileInputAuto"
+                                    type="file"
+                                    @input="onSelectFileAuto"
+                                  >
+                                </div>
                                </v-col>
 
                               <v-col
@@ -317,13 +339,31 @@
                                   hide-details
                                   ></v-textarea>
                               </v-col>
-                              <v-col cols="12">
-                                  <v-btn color="primary" @click="Submit">
-                                  Submit
-                                  </v-btn>
-                                  <v-btn color="error" style="margin-left:50px" @click="Delete(delId)">
-                                  Delete
-                                  </v-btn>
+                              <v-col
+                                  cols="12"
+                                  md="6"
+                              >
+                          
+                              </v-col>
+                            
+                              <v-col cols="12" md="6">
+                               <v-row>
+                                   <v-col cols="12" md="12">
+                                    <v-btn color="primary" @click="Submit">
+                                    Submit
+                                    </v-btn>
+                               
+                                   <v-btn color="error" style="margin-left:20px" @click="Delete(delId)">
+                                    Delete
+                                    </v-btn>
+                                  </v-col>
+                               </v-row>
+                              </v-col>
+                                 <v-col
+                                  cols="12"
+                                  md="6"
+                              >
+                          
                               </v-col>
                               </v-row>
                           </v-form>
@@ -428,6 +468,7 @@ export default {
       useritem:{},
       imageDataAgent: require('@/assets/images/avatars/1.png'),
       imageDataAgency: require('@/assets/images/avatars/default.png'),
+      imageDataAuto: require('@/assets/images/avatars/default.png'),
       imageDataHousehold: require('@/assets/images/avatars/default.png'),
       imageDataProperty: require('@/assets/images/avatars/imgpsh_fullsize_anim.png'),
       imageDataIntro: require('@/assets/images/avatars/imgpsh_fullsize_anim.png'),
@@ -436,6 +477,7 @@ export default {
       propertyimagename:'',
       householdimagename:'',
       introimagename:'',
+      autoimagename:'',
       firstName:'',
       link:'',
       lastName:'',
@@ -542,6 +584,7 @@ export default {
             propertyimage : this.propertyimagename == ''?this.useritem.propertyimage:this.propertyimagename,
             householdimage : this.householdimagename ==''?this.useritem.householdimage:this.householdimagename,
             agencyimage : this.agencyimagename == ''?this.useritem.agencyimage:this.agencyimagename,
+            autoimage : this.autoimagename == ''?this.useritem.autoimage:this.autoimagename,
             created_at:Date.now(),
             role : 0,
         }
@@ -575,7 +618,10 @@ export default {
             catch(err){
                 console.log(err);
             }
-            this.agencyimagename = input.files[0].name
+              var newname = input.files[0].name
+            newname = newname.replace(/[&\/\\#,+()$~%'":*?<>{}]/g, '').toLowerCase()
+            newname = newname.replace(/\s+/g, '').toLowerCase()
+            this.agencyimagename = newname
         },
         async onSelectFileIntro () {
             const input = this.$refs.fileInputIntro
@@ -596,7 +642,10 @@ export default {
             catch(err){
                 console.log(err);
             }
-            this.introimagename = input.files[0].name
+              var newname = input.files[0].name
+            newname = newname.replace(/[&\/\\#,+()$~%'":*?<>{}]/g, '').toLowerCase()
+            newname = newname.replace(/\s+/g, '').toLowerCase()
+            this.introimagename = newname
         },
         async onSelectFileProperty () {
             const input = this.$refs.fileInputProperty
@@ -617,7 +666,10 @@ export default {
             catch(err){
                 console.log(err);
             }
-            this.propertyimagename = input.files[0].name
+             var newname = input.files[0].name
+            newname = newname.replace(/[&\/\\#,+()$~%'":*?<>{}]/g, '').toLowerCase()
+            newname = newname.replace(/\s+/g, '').toLowerCase()
+            this.propertyimagename = newname
         },
         async onSelectFileHousehold () {
             const input = this.$refs.fileInputHousehold
@@ -638,7 +690,34 @@ export default {
             catch(err){
                 console.log(err);
             }
-            this.householdimagename = input.files[0].name
+            var newname = input.files[0].name
+            newname = newname.replace(/[&\/\\#,+()$~%'":*?<>{}]/g, '').toLowerCase()
+            newname = newname.replace(/\s+/g, '').toLowerCase()
+            this.householdimagename = newname
+        },
+         async onSelectFileAuto () {
+            const input = this.$refs.fileInputAuto
+            const files = input.files
+            if (files && files[0]) {
+                const reader = new FileReader
+                reader.onload = e => {
+                this.imageDataAuto = e.target.result
+                }
+                reader.readAsDataURL(files[0])
+                this.$emit('input', files[0])
+            }
+            const formData = new FormData();
+            formData.append('file', input.files[0]);
+            try{
+                await axios.post(BaseUrl+'fileupload', formData);
+            }
+            catch(err){
+                console.log(err);
+            }
+            var newname = input.files[0].name
+            newname = newname.replace(/[&\/\\#,+()$~%'":*?<>{}]/g, '').toLowerCase()
+            newname = newname.replace(/\s+/g, '').toLowerCase()
+            this.autoimagename = newname
         },
         async onSelectFileAgent () {
             const input = this.$refs.fileInputAgent
@@ -659,7 +738,10 @@ export default {
             catch(err){
                 console.log(err);
             }
-            this.agentimagename = input.files[0].name
+            var newname = input.files[0].name
+            newname = newname.replace(/[&\/\\#,+()$~%'":*?<>{}]/g, '').toLowerCase()
+            newname = newname.replace(/\s+/g, '').toLowerCase()
+            this.agentimagename = newname
             
         },
         chooseImageAgency () {
@@ -676,6 +758,9 @@ export default {
         },
         chooseImageIntro () {
             this.$refs.fileInputIntro.click()
+        },
+        chooseImageAuto () {
+            this.$refs.fileInputAuto.click()
         },
     async getUsers() {
       var _that = this;
@@ -756,7 +841,7 @@ export default {
             this.emailtext = this.useritem.emailtext == undefined || this.useritem.emailtext == ''?"":this.useritem.emailtext,
             this.imageDataAgent = this.useritem.agentimage == undefined || this.useritem.agentimage == ''?require('@/assets/images/avatars/1.png'):BaseUrl+this.useritem.agentimage,
             this.imageDataIntro = this.useritem.introimage == undefined || this.useritem.introimage == ''?require('@/assets/images/avatars/imgpsh_fullsize_anim.png'):BaseUrl+this.useritem.introimage,
-            
+             this.imageDataAuto = this.useritem.autoimage == undefined || this.useritem.autoimage == ''?require('@/assets/images/avatars/default.png'):BaseUrl+this.useritem.autoimage,
             this.imageDataProperty = this.useritem.propertyimage == undefined || this.useritem.propertyimage == ''?require('@/assets/images/avatars/imgpsh_fullsize_anim.png'):BaseUrl+this.useritem.propertyimage,
             this.imageDataAgency = this.useritem.agencyimage == undefined || this.useritem.agencyimage == ''?require('@/assets/images/avatars/default.png'):BaseUrl+this.useritem.agencyimage,
             this.imageDataHousehold = this.useritem.householdimage == undefined || this.useritem.householdimage == ''?require('@/assets/images/avatars/default.png'):BaseUrl+this.useritem.householdimage

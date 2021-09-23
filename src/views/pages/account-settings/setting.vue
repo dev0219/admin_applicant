@@ -263,6 +263,28 @@
                     cols="12"
                     md="6"
                 >
+                 <label class="text-h6">Auto Image</label>
+                  <div
+                    class="image-input agent-image"
+                    :style="{ 'background-image': `url('${imageDataAuto}'` }"
+                    @click="chooseImageAuto"
+                  >
+                  <v-icon class="custom-icon" size="30">
+                    {{mdiCloudUploadOutline}}
+                    </v-icon>
+                    <span
+                      v-if="!imageDataAuto"
+                      class="placeholder"
+                    >
+                    
+                    </span>
+                    <input
+                      class="file-input"
+                      ref="fileInputAuto"
+                      type="file"
+                      @input="onSelectFileAuto"
+                    >
+                  </div>
                
                 </v-col>
 
@@ -295,20 +317,36 @@
         </v-card-text>
       </v-card>
     </v-col>
+    <v-dialog
+      v-model="sendpassword"
+      width="500"
+      content-class="vdialognewpassword"
+    >
+      <v-card>
+        
+        <v-card-text>
+          <h4>Your Profile was updated successfully!</h4>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-row>
 </template>
 <script>
 import axios from 'axios'
 import {mdiCloudUploadOutline } from '@mdi/js'
 const BaseUrl = 'https://apply.insure/'
+
 import qs from 'qs';
 export default{
     data() {
         return {
             useritem:{},
+            sendpassword:false,
             imageDataAgent: require('@/assets/images/avatars/1.png'),
             imageDataAgency: require('@/assets/images/avatars/default.png'),
             imageDataHousehold: require('@/assets/images/avatars/default.png'),
+
+            imageDataAuto: require('@/assets/images/avatars/default.png'),
             imageDataProperty: require('@/assets/images/avatars/imgpsh_fullsize_anim.png'),
             imageDataIntro: require('@/assets/images/avatars/imgpsh_fullsize_anim.png'),
             agencyimagename:'',
@@ -316,6 +354,7 @@ export default{
             propertyimagename:'',
             householdimagename:'',
             introimagename:'',
+            autoimagename:'',
             firstName:'',
             link:'',
             answer_type6:'y/n',
@@ -362,6 +401,7 @@ export default{
             this.emailtext = this.useritem.emailtext == undefined || this.useritem.emailtext == ''?"":this.useritem.emailtext,
             this.imageDataAgent = this.useritem.agentimage == undefined || this.useritem.agentimage == ''?require('@/assets/images/avatars/1.png'):BaseUrl+this.useritem.agentimage,
             this.imageDataIntro = this.useritem.introimage == undefined || this.useritem.introimage == ''?require('@/assets/images/avatars/imgpsh_fullsize_anim.png'):BaseUrl+this.useritem.introimage,
+            this.imageDataAuto = this.useritem.autoimage == undefined || this.useritem.autoimage == ''?require('@/assets/images/avatars/default.png'):BaseUrl+this.useritem.autoimage,
             
             this.imageDataProperty = this.useritem.propertyimage == undefined || this.useritem.propertyimage == ''?require('@/assets/images/avatars/imgpsh_fullsize_anim.png'):BaseUrl+this.useritem.propertyimage,
             this.imageDataAgency = this.useritem.agencyimage == undefined || this.useritem.agencyimage == ''?require('@/assets/images/avatars/default.png'):BaseUrl+this.useritem.agencyimage,
@@ -388,16 +428,26 @@ export default{
                 propertyimage : this.propertyimagename == ''?this.useritem.propertyimage:this.propertyimagename,
                 householdimage : this.householdimagename ==''?this.useritem.householdimage:this.householdimagename,
                 agencyimage : this.agencyimagename == ''?this.useritem.agencyimage:this.agencyimagename,
+                autoimage : this.autoimagename == ''?this.useritem.autoimage:this.autoimagename,
+                 created_at:Date.now(),
                 role : 0,
             }
            var url = BaseUrl + 'edit';
+           var _that = this;
            const options = {
                 method: 'POST',
                 headers: { 'content-type': 'application/x-www-form-urlencoded' },
                 data: qs.stringify(data),
                 url,
               };
-             await axios(options).then(response => (console.log(response)))        },
+             await axios(options).then(function(response){
+               if(response.status == 200){
+                 _that.sendpassword = true;
+                  setTimeout(() => {_that.sendpassword = false}, 3000);
+               }
+             }
+               )
+            },
         async onSelectFileAgency () {
             const input = this.$refs.fileInputAgency
             const files = input.files
@@ -417,7 +467,34 @@ export default{
             catch(err){
                 console.log(err);
             }
-            this.agencyimagename = input.files[0].name
+            var newname = input.files[0].name
+            newname = newname.replace(/[&\/\\#,+()$~%'":*?<>{}]/g, '').toLowerCase()
+            newname = newname.replace(/\s+/g, '').toLowerCase()
+            this.agencyimagename = newname
+        },
+        async onSelectFileAuto () {
+            const input = this.$refs.fileInputAuto
+            const files = input.files
+            if (files && files[0]) {
+                const reader = new FileReader
+                reader.onload = e => {
+                this.imageDataAuto = e.target.result
+                }
+                reader.readAsDataURL(files[0])
+                this.$emit('input', files[0])
+            }
+            const formData = new FormData();
+            formData.append('file', input.files[0]);
+            try{
+                await axios.post(BaseUrl+'fileupload', formData);
+            }
+            catch(err){
+                console.log(err);
+            }
+            var newname = input.files[0].name
+            newname = newname.replace(/[&\/\\#,+()$~%'":*?<>{}]/g, '').toLowerCase()
+            newname = newname.replace(/\s+/g, '').toLowerCase()
+            this.autoimagename = newname
         },
         async onSelectFileIntro () {
             const input = this.$refs.fileInputIntro
@@ -438,7 +515,10 @@ export default{
             catch(err){
                 console.log(err);
             }
-            this.introimagename = input.files[0].name
+            var newname = input.files[0].name
+           
+            newname = newname.replace(/[&\/\\#,+()$~%'":*?<>{}]/g, '').toLowerCase()
+            this.introimagename = newname.replace(/\s+/g, '').toLowerCase()
         },
         async onSelectFileProperty () {
             const input = this.$refs.fileInputProperty
@@ -459,7 +539,10 @@ export default{
             catch(err){
                 console.log(err);
             }
-            this.propertyimagename = input.files[0].name
+            var newname = input.files[0].name
+            newname = newname.replace(/[&\/\\#,+()$~%'":*?<>{}]/g, '').toLowerCase()
+            newname = newname.replace(/\s+/g, '').toLowerCase()
+            this.propertyimagename = newname
         },
         async onSelectFileHousehold () {
             const input = this.$refs.fileInputHousehold
@@ -480,7 +563,10 @@ export default{
             catch(err){
                 console.log(err);
             }
-            this.householdimagename = input.files[0].name
+            var newname = input.files[0].name
+            newname = newname.replace(/[&\/\\#,+()$~%'":*?<>{}]/g, '').toLowerCase()
+            newname = newname.replace(/\s+/g, '').toLowerCase()
+            this.householdimagename = newname
         },
         async onSelectFileAgent () {
             const input = this.$refs.fileInputAgent
@@ -501,7 +587,10 @@ export default{
             catch(err){
                 console.log(err);
             }
-            this.agentimagename = input.files[0].name
+            var newname = input.files[0].name
+            newname = newname.replace(/[&\/\\#,+()$~%'":*?<>{}]/g, '').toLowerCase()
+            newname = newname.replace(/\s+/g, '').toLowerCase()
+            this.agentimagename = newname
             
         },
         chooseImageAgency () {
@@ -518,6 +607,9 @@ export default{
         },
         chooseImageIntro () {
             this.$refs.fileInputIntro.click()
+        },
+        chooseImageAuto () {
+            this.$refs.fileInputAuto.click()
         }
 
     }
@@ -542,6 +634,9 @@ export default{
 .agent-image:hover .custom-icon {
     opacity: 1;
     color:black;
+}
+.vdialognewpassword{
+  top:-20px
 }
 .custom-icon{
   opacity:0;

@@ -69,33 +69,24 @@
     >
       <v-card>
         <v-card-title class="text-h5" style="padding:50px;color:#000 !important">
-                <table>
-                  <tbody id="property">
-                    <tr style="display:inline-flex;width:600px;">
-                      <td width="50%">
-                        <table>
-                          <tr>
-                            <td>
-                              <h1 style="width: 100%;font-family: sans-serif;font-size: 24px; color: #000 !important;font-weight: 600;margin-bottom: 20px;">Property & Casualty Full App</h1>
+          <v-row>
+            <v-col col="12" xs='12' class="modalinfo">
+               <div>
+                <h1 style="width: 100%;font-family: sans-serif;font-size: 20px; color: #000 !important;font-weight: 600;margin-bottom: 20px;">Property & Casualty Full App</h1>
                               <img width="20px" src="https://apply.insure/assets/images/Quote_latest_mail_3.png">
                               <a :href="'https://apply.insure/f/'+applink" target="_blank" style="text-decoration: none;font-family: sans-serif;font-size: 14px;vertical-align: super;">https://apply.insure/f/{{applink}}</a>
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-
-                      <td width="50%" style="display: inline-block;margin-top: 10px;">
-                        <img style="display: inline-block;margin: 0 10px;" width="50px" src="https://apply.insure/assets/images/Quote_latest_mail_1.png">
+               </div>
+               <div>
+                      <img style="display: inline-block;margin: 0 10px;" width="50px" src="https://apply.insure/assets/images/Quote_latest_mail_1.png">
                         <div style="display: inline-block;text-align: center;">
                           <h3 style="margin: 0;text-align: center;color: #000 !important">11</h3>
                           <p style="    text-align: center;align-items: center;margin: 0;margin-bottom: 6px;color: #000 !important">pages</p>
                           <img width="40px" src="https://apply.insure/assets/images/Quote_latest_mail_2.png">
                         </div>
                         <img width="50px" style="margin: 0 10px;" src="https://apply.insure/assets/images/Quote_latest_mail_1.png">
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+               </div>
+             </v-col>
+          </v-row>
         </v-card-title>
         <v-card-text  style="padding:50px ;color:#000 !important">
           
@@ -114,11 +105,13 @@
                   
                   </v-col>
                   <v-col col="12" sm="6"> <h5 style="color: #000 !important">Applicant(s)</h5><br>
-                     Address : {{applicationinfo.address}}<br>
+                    
+                    Address : {{applicationinfo.address}}<br>
                     Email : {{applicationinfo.email}}<br>
                     Phone : {{applicationinfo.phone}}<br>
-                    {{applicationinfo.name}}  &nbsp;&nbsp;&nbsp;{{applicationinfo.birthday}}&nbsp;&nbsp;&nbsp;{{applicationinfo.license}}<br>
-
+                    <div v-for="item of applicationinfo.householdmember" :key="item.name">
+                              {{item.name}}  &nbsp;&nbsp;&nbsp;{{item.birthday}}&nbsp;&nbsp;&nbsp;{{item.license}}<br>
+                    </div>
                     Current carrier : {{applicationinfo.carrierType}}<br>
                     Current auto premium : {{applicationinfo.current_auto_premiun}}<br><br>
                     <h5 style="color: #000 !important">Custom Questions</h5>
@@ -131,7 +124,10 @@
                
               <v-row>
                <v-col col="12" sm="6"> <h5 style="color: #000 !important">Car(s)</h5><br>
-              {{applicationinfo.cardatayear}}  &nbsp;&nbsp;&nbsp;{{applicationinfo.cartype}}&nbsp;&nbsp;&nbsp;{{applicationinfo.carmodel}}&nbsp;&nbsp;&nbsp;{{applicationinfo.vin}}<br></v-col>
+                     <div v-for="(item, index) of applicationinfo.cardata" :key="item.cardatayear">
+                              {{item.cardatayear}}  &nbsp;&nbsp;&nbsp;{{item.cartype}}&nbsp;&nbsp;&nbsp;{{item.carmodel}}&nbsp;&nbsp;&nbsp;{{item.vininfo}}<br>
+                    </div>
+               </v-col>
                <v-col col="12" sm="6"> <h5 style="color: #000 !important">Note(s)</h5><br><br>
                 {{applicationinfo.requestorcomments}}<br></v-col>
               </v-row>
@@ -314,9 +310,23 @@ export default {
       await axios.post(BaseUrl+'statusupdate', data).then(response => (console.log(response)));
     } ,
     appInformation(val) {
-       
        this.applink = val.link;
        this.applicationinfo.name = val.name;
+
+       this.applicationinfo.householdmember = val.householdmember;
+       if(this.applicationinfo.householdmember.length>0){
+         for(var m=0;m<this.applicationinfo.householdmember.length;m++){
+      
+             var date = new Date(this.applicationinfo.householdmember[m]['birthday']);
+                     var hour = date.getHours();
+                     var min = date.getMinutes();
+                     var sec = date.getSeconds();
+                     this.applicationinfo.householdmember[m]['birthday'] = (date.getMonth()+1) +'-'+ date.getDate()  +'-'+date.getFullYear();
+         
+         
+           
+         }
+       }
        this.applicationinfo.question5 = val.question5?val.question5:'';
        this.applicationinfo.question6 = val.question6?val.question6:'';
        this.applicationinfo.answer5 = val.answer5?val.answer5:'';
@@ -325,7 +335,6 @@ export default {
        this.applicationinfo.email = val.email 
        this.applicationinfo.phone = val.phone
        this.applicationinfo.carrierType = val.carrierType 
-       this.applicationinfo.vin = val.vin?val.vin:'';
        this.applicationinfo.requestorcomments = val.requestorcomments 
        this.applicationinfo.mailingadress = val.mailingadress 
        this.applicationinfo.birthday = val.birthday 
@@ -336,10 +345,17 @@ export default {
        this.applicationinfo.yearBuilt = val.yearBuilt 
        this.applicationinfo.sqft = val.sqft 
        this.applicationinfo.insuranceclaims = val.insuranceclaims
-       this.applicationinfo.cardatayear = val.cardatayear 
-       this.applicationinfo.cartype = val.cartype 
+       this.applicationinfo.cardata = val.cardata 
+       if(this.applicationinfo.cardata.length>0){
+         for(var i=0;i<this.applicationinfo.cardata.length;i++){
+           this.applicationinfo.cardata[i]['vininfo']='';
+           if(val.vin[i]){
+                   this.applicationinfo.cardata[i]['vininfo'] = val.vin[i]['vininfo']
+           }
+           
+         }
+       }
        this.applicationinfo.security_system = val.security_system 
-       this.applicationinfo.carmodel = val.carmodel 
        this.applicationinfo.current_auto_premiun = val.current_auto_premiun
        this.applicationinfo.dog = val.dog
        this.applicationinfo.shortrentals = val.shortrentals
@@ -352,7 +368,6 @@ export default {
        this.applicationinfo.license = val.license 
        this.applicationinfo.agentemail = val.agentemail 
        this.applicationinfo.insuranceType = val.insuranceType 
-
        this.dialog = true
     },
     async Status(a,item){
@@ -440,6 +455,9 @@ export default {
 .search-bar-responsive{
      position: fixed;top: 52px;left:30%;width:400px;z-index: 1;
   }
+.modalinfo{
+  display:flex
+}
 @media  screen and (max-width: 1565px) {
   .search-bar-responsive{
      position: fixed;top: 52px;left:30%;
@@ -469,6 +487,9 @@ export default {
   .search-bar-responsive{
      position: relative;top: 20px;left:0%;width:100%;
   }
+  .modalinfo{
+      display:block
+    }
 }
 
 </style>
