@@ -133,7 +133,7 @@ export default {
 </script>
 <style>
  .counter{
-    width:21px;height:15px;border-radius:40%;color:black;font-size:13px;margin-left:10px
+    width:27px;height:15px;border-radius:40%;color:black;font-size:13px;margin-left:10px
   }
    .Applications{
     margin-left:20%;

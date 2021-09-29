@@ -109,6 +109,7 @@
                     Address : {{applicationinfo.address}}<br>
                     Email : {{applicationinfo.email}}<br>
                     Phone : {{applicationinfo.phone}}<br>
+                    Previous Address : {{applicationinfo.currentadress}}
                     <div v-for="item of applicationinfo.householdmember" :key="item.name">
                               {{item.name}}  &nbsp;&nbsp;&nbsp;{{item.birthday}}&nbsp;&nbsp;&nbsp;{{item.license}}<br>
                     </div>
@@ -356,6 +357,7 @@ export default {
          }
        }
        this.applicationinfo.security_system = val.security_system 
+       this.applicationinfo.currentadress = val.currentadress
        this.applicationinfo.current_auto_premiun = val.current_auto_premiun
        this.applicationinfo.dog = val.dog
        this.applicationinfo.shortrentals = val.shortrentals
@@ -389,6 +391,9 @@ export default {
                  await axios.get(BaseUrl + `allapplicant`).then(response => (this.applicantLst = response.data))
                  if(this.applicantLst.length > 0){
                    for(var i=0;i<this.applicantLst.length;i++){
+                     if(this.applicantLst[i]['address'].includes('undefined')){
+                       this.applicantLst[i]['address'] = this.applicantLst[i]['mailingadress']
+                     }
                      var date = new Date(this.applicantLst[i]['register_date']);
                      var hour = date.getHours();
                      var min = date.getMinutes();

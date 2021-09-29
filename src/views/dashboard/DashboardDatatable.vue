@@ -585,7 +585,6 @@ export default {
             householdimage : this.householdimagename ==''?this.useritem.householdimage:this.householdimagename,
             agencyimage : this.agencyimagename == ''?this.useritem.agencyimage:this.agencyimagename,
             autoimage : this.autoimagename == ''?this.useritem.autoimage:this.autoimagename,
-            created_at:Date.now(),
             role : 0,
         }
         var url = BaseUrl + 'edit';
